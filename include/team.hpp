@@ -24,6 +24,9 @@ H = Nadir's Hero
 
 */
 
+// map dimensions
+static const int MAP_LENGTH = 15; // cols
+static const int MAP_WIDTH = 5; // rows
 
 // identifiers
 static const int ZENITH_BASE = 'U';
@@ -57,8 +60,8 @@ static int CREEP_ID_ZENITH = 0;
 static int CREEP_ID_NADIR = 0;
 
 // position in form of {row, col}
-static const pair<int, int> CREEP_ZENITH_ST_POS = {5, 1};
-static const pair<int, int> CREEP_NADIR_ST_POS = {5, 13};
+static const pair<int, int> CREEP_ZENITH_ST_POS = {2, 1};
+static const pair<int, int> CREEP_NADIR_ST_POS = {2, 13};
 
 // base damage for creep and hero
 static const int CREEP_BASE_DMG = 10;
@@ -83,8 +86,8 @@ static const int MAX_HERO_HIT_RANGE = 3;
 // vision methods
 static const vector<pair<int, int> > get_base_nadir_vision() {
     vector<pair<int, int> > res;
-    for(int i=11; i<15; i++) {
-        for(int j=0; j<5; j++) {
+    for(int i=0; i<4; i++) {
+        for(int j=11; j<15; j++) {
             res.push_back({i, j});
         }
     }

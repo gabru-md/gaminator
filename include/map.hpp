@@ -6,12 +6,8 @@
 #include <mutex>
 #include "logger.hpp"
 #include "team.hpp"
-#include "creep.hpp"
 #include <thread>
 using namespace std;
-
-#define LENGTH 15
-#define WIDTH 5
 
 class Map {
     private:
@@ -22,13 +18,7 @@ class Map {
         int length;
         int width;
 
-        vector<Creep*> zenith_creeps;
-        vector<Creep*> nadir_creeps;
-        vector<thread> zenith_creeps_thread;
-        vector<thread> nadir_creeps_thread;
-
         mutex map_lock;
-        void spawn_creeps();
 
     public:
         Map();

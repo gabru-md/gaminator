@@ -8,17 +8,14 @@ Map::Map() {
     auto now = chrono::system_clock::now();
     init_time = now;
     
-    length = LENGTH;
-    width = WIDTH;
+    length = MAP_LENGTH; // cols
+    width = MAP_WIDTH; // rows
+
+    map.resize(width, vector<int>(length, BLANK_IDENTIFIER));
+    logger->warn("Map Size " + to_string(map.size()) + ":" +to_string(map[0].size()));
     logger->debug("Map has length: " + to_string(length));
     logger->debug("Map has width: " + to_string(width));
 
-    zenith_creeps.resize(MAX_CREEPS_POOL_SIZE);
-    nadir_creeps.resize(MAX_CREEPS_POOL_SIZE);
-    zenith_creeps_thread.resize(MAX_CREEPS_POOL_SIZE);
-    nadir_creeps_thread.resize(MAX_CREEPS_POOL_SIZE);
-
-    spawn_creeps();
 }
 
 Map::~Map() {
@@ -35,22 +32,6 @@ Map* Map::get_world() {
         world = new Map();
     }
     return world;
-}
-
-void Map::spawn_creeps() {
-    logger->debug("Spawning Creeps for Zenith and Nadir.");
-    for(int i=0;i<MAX_CREEPS_POOL_SIZE;i++) {
-        zenith_creeps[i] = new Creep(Team::ZENITH);
-        nadir_creeps[i] = new Creep(Team::NADIR);
-    }
-
-    for(int i=0;i<MAX_CREEPS_POOL_SIZE;i++) {
-        zenith_creeps_thread[i] = zenith_creeps[i]->spawn();
-        nadir_creeps_thread[i] = nadir_creeps[i]->spawn();
-
-        zenith_creeps_thread[i].join();
-        nadir_creeps_thread[i].join();
-    }
 }
 
 vector<vector<int> > Map::acquire_map() {
@@ -73,4 +54,5 @@ void Map::set_entity_pos(pair<int, int> pos, int id) {
     map_lock.lock();
     map[pos.first][pos.second] = id;
     map_lock.unlock();
+    logger->warn("Position Set Successful", {"POS", to_string(id)});
 }

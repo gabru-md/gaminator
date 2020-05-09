@@ -4,7 +4,7 @@
 #include "logger.hpp"
 #include "team.hpp"
 #include "entity.hpp"
-// #include "map.hpp"
+#include "map.hpp"
 #include <thread>
 
 class Creep: protected Entity {
@@ -27,7 +27,7 @@ class Creep: protected Entity {
         Creep(Team);
         ~Creep();
         void run();
-        bool has_no_enemy_in_vision();
+        bool no_enemy_in_sight();
         thread spawn() {
             return thread([=] { run(); });
         }
