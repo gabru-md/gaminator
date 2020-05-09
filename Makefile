@@ -22,4 +22,4 @@ entity.o: src/entity.cpp
 	g++ -c src/entity.cpp --std=c++11
 
 clean:
-	rm *.o logs/*
+	rm *.o logs/*.log
