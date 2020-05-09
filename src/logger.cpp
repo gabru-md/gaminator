@@ -26,6 +26,32 @@ void Logger::debug(string message) {
     stream << fmt(level::DEBUG, message) << endl;
 }
 
+void Logger::debug(string message, vector<string> sym) {
+    if(!open()) {
+        cerr << "Error logging debug statement!" << endl;
+        return;
+    }
+    string msg = "";
+    for(string str: sym) {
+        msg += "[" + str + "] ";
+    }
+    msg += message;
+    stream << fmt(level::DEBUG, msg) << endl;
+}
+
+void Logger::warn(string message, vector<string> sym) {
+    if(!open()) {
+        cerr << "Error logging debug statement!" << endl;
+        return;
+    }
+    string msg = "";
+    for(string str: sym) {
+        msg += "[" + str + "] ";
+    }
+    msg += message;
+    stream << fmt(level::WARN, msg) << endl;
+}
+
 void Logger::warn(string message) {
     if(!open()) {
         cerr << "Error logging warning statement!" << endl;

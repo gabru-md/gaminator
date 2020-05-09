@@ -6,6 +6,7 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 
@@ -31,6 +32,8 @@ class Logger {
         Logger(string);
         ~Logger();
         void debug(string);
+        void debug(string, vector<string>);
+        void warn(string, vector<string>);
         void warn(string);
 };
 
