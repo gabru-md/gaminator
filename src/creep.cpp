@@ -1,5 +1,8 @@
 #include "../include/creep.hpp"
 
+int Creep::zenith_creeps_alive = 0;
+int Creep::nadir_creeps_alive = 0;
+
 Creep::Creep(Team _t) {
     team = _t;
     creep_id = generate_creep_id(); 
@@ -9,9 +12,7 @@ Creep::Creep(Team _t) {
     set_position(get_base_position());
     set_type(get_creep_type());
     Map::get_world()->set_entity_pos(get_position(), cvt_type_to_id(get_type()));
-    logger->debug("Base Position " + pos_to_str());
-    logger->debug("Base vision list size: " + to_string(get_vision().size()));
-    logger->debug(get_team_name() + " Creep created with Id: " + to_string(creep_id));
+    incr_alive(team);
 }
 
 void Creep::run() {
@@ -20,13 +21,18 @@ void Creep::run() {
     while(no_enemy_in_sight()) {
         logger->warn("No enemy in sight!", {to_string(get_type())});
         move_forward();
+        // if(has_reached_end()) {
+        //     break;
+        // }
     }
     logger->warn("Enemy in sight!", {get_team_name(), to_string(get_creep_id())});
     delete this;
 }
 
 Creep::~Creep() {
-    logger->debug("Creep died", {get_team_name(), to_string(creep_id)});
+    logger->info("Creep Position: " + pos_to_str(), {get_team_name(), to_string(creep_id)});
+    logger->warn("Creep died", {get_team_name(), to_string(creep_id)});
+    decr_alive(team);
 }
 
 
@@ -106,6 +112,7 @@ bool Creep::no_enemy_in_sight() {
     vector<vector<int> > map = Map::get_world()->acquire_map();
     for(pair<int, int> vis: get_vision()) {
         if(map[vis.first][vis.second] == enemy_creep()) {
+            // cout << vis.first << ", " << vis.second << endl;
             flag = false;
             break;
         }
@@ -115,6 +122,7 @@ bool Creep::no_enemy_in_sight() {
 }
 
 void Creep::move_forward() {
+    Map::get_world()->acquire_method();
     vector<vector<int> > map = Map::get_world()->acquire_map();
     pair<int, int> creep_pos = get_position();
     int mv_dy;
@@ -139,12 +147,15 @@ void Creep::move_forward() {
             break;
     }
     Map::get_world()->release_map();
+    // cout << "lol\n";
     // if entity couldn't move then check here -- TODO
     Map::get_world()->remove_entity_from_pos(creep_pos);
     Map::get_world()->set_entity_pos(get_position(), cvt_type_to_id(get_type()));
     logger->debug("Moved to " + pos_to_str(), {get_team_name(), to_string(get_creep_id())});
     logger->debug("Updating Vision", {get_team_name(), to_string(get_creep_id())});
     update_vision();
+    
+    Map::get_world()->release_method();
 }
 
 void Creep::update_vision() {
@@ -160,9 +171,65 @@ void Creep::update_vision() {
     pair<int, int> pos = get_position();
     for(auto x: dx) {
         for(auto y: dy) {
-            nv.insert({pos.first + x, pos.second + y});
+            if(is_in_bounds({pos.first + x, pos.second + y})) {
+                nv.insert({pos.first + x, pos.second + y});
+            }
         }
     }
     add_to_vision(nv);
-    logger->debug("Vision List Size: " + to_string(get_vision().size()), {get_team_name(), to_string(get_creep_id())});
+    // logger->debug("Vision List Size: " + to_string(get_vision().size()), {get_team_name(), to_string(get_creep_id())});
+}
+
+bool Creep::has_reached_end() {
+    if(team == Team::ZENITH) {
+        if(get_position().second == MAP_LENGTH - 1)
+            return false;
+    } else {
+        if(get_position().second == 0)
+            return false;
+    }
+    return true;
+}
+
+void Creep::incr_alive(Team t) {
+    switch(t) {
+        case Team::ZENITH:
+            Creep::zenith_creeps_alive++;
+            break;
+        case Team::NADIR:
+            Creep::nadir_creeps_alive++;
+            break;
+    }
+    game_logger->info("Alive Creeps Count: " + to_string(get_alive_count()), {"ALIVE"});
+}
+
+void Creep::decr_alive(Team t) {
+    switch(t) {
+        case Team::ZENITH:
+            Creep::zenith_creeps_alive--;
+            break;
+        case Team::NADIR:
+            Creep::nadir_creeps_alive--;
+            break;
+    }
+    game_logger->info("Alive Creeps Count: " + to_string(get_alive_count()), {"DEAD"});
+}
+
+int Creep::get_alive_count() {
+    return (
+        get_alive_count(Team::ZENITH)
+        +
+        get_alive_count(Team::NADIR)
+    );
+}
+
+int Creep::get_alive_count(Team t) {
+    switch(t) {
+        case Team::ZENITH:
+            return zenith_creeps_alive;
+        case Team::NADIR:
+            return nadir_creeps_alive;
+        default:
+            return 0;
+    }
 }

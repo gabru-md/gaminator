@@ -64,3 +64,17 @@ void Map::remove_entity_from_pos(pair<int, int> pos) {
     map_lock.unlock();    
     logger->warn("Releasing Map", {"ENTITY", "RM"});
 }
+
+void Map::acquire_method() {
+    logger->info("Acquiring Method Lock", {"M-LOCK"});
+    method_lock.lock();
+}
+
+void Map::release_method() {
+    try{
+        logger->warn("Releasing the acquired Map Lock", {"LOCK"});
+        method_lock.unlock();
+    } catch(exception e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}

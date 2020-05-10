@@ -58,6 +58,10 @@ void Entity::add_to_vision(set<pair<int, int> > nv) {
     }
 }
 
+void Entity::update_health(int h) {
+    health += h;
+}
+
 bool Entity::is_valid(pair<int, int> pos, int x, int y, vector<vector<int> > map) {
     int nx = pos.first + x;
     int ny = pos.second +y;
@@ -67,7 +71,15 @@ bool Entity::is_valid(pair<int, int> pos, int x, int y, vector<vector<int> > map
         nx >= ROAM_TOP_BOUND && nx <= ROAM_BOTTOM_BOUND
         &&
         map[nx][ny] == BLANK_IDENTIFIER
-        );
+    );
+}
+
+bool Entity::is_in_bounds(pair<int, int> pos) {
+    return (
+        pos.second >=  ROAM_LEFT_BOUND && pos.second <= ROAM_RIGHT_BOUND
+        &&
+        pos.first >= ROAM_TOP_BOUND && pos.first <= ROAM_BOTTOM_BOUND
+    );
 }
 
 int Entity::cvt_type_to_id(EntityType et) {

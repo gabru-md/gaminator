@@ -19,16 +19,21 @@ class Map {
         int width;
 
         mutex map_lock;
+        mutex method_lock;
 
     public:
         Map();
         ~Map();
+
         static Map* get_world();
         static void delete_world();
+        
         void set_entity_pos(pair<int, int>, int);
         vector<vector<int> > acquire_map();
         void release_map();
         void remove_entity_from_pos(pair<int, int>);
+        void acquire_method();
+        void release_method();
 };
 
 #endif

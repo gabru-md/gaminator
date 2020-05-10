@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <utility>
+#include "logger.hpp"
 using namespace std;
 
 /*
@@ -25,6 +26,8 @@ G = Zenith's Hero
 H = Nadir's Hero
 
 */
+
+static Logger* game_logger = new Logger("GAME");
 
 // map dimensions
 static const int MAP_LENGTH = 15; // cols
@@ -75,7 +78,7 @@ static const int HERO_BASE_HEALTH = 500;
 
 // creeps pool
 // static const int MAX_CREEPS_POOL_SIZE = 5;
-static const int MAX_CREEPS_POOL_SIZE = 1;
+static const int MAX_CREEPS_POOL_SIZE = 5;
 
 // base vision
 static const set<pair<int, int> > BASE_VISION_ZENITH = get_base_zenith_vision();

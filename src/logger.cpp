@@ -60,6 +60,27 @@ void Logger::warn(string message) {
     stream << fmt(level::WARN, message) << endl;
 }
 
+void Logger::info(string message, vector<string> sym) {
+    if(!open()) {
+        cerr << "Error logging info statement!" << endl;
+        return;
+    }
+    string msg = "";
+    for(string str: sym) {
+        msg += "[" + str + "] ";
+    }
+    msg += message;
+    stream << fmt(level::INFO, msg) << endl;
+}
+
+void Logger::info(string message) {
+    if(!open()) {
+        cerr << "Error logging info statement!" << endl;
+        return;
+    }
+    stream << fmt(level::INFO, message) << endl;
+}
+
 bool Logger::open() {
     if(name.length() == 0)
         return false;
@@ -107,7 +128,15 @@ string Logger::fmt(level lvl, string message) {
     auto now = chrono::system_clock::now();
     time_t now_time = chrono::system_clock::to_time_t(now);
     string _fmt = chomp(ctime(&now_time));
-    string _lvl = lvl == level::DEBUG ? "DEBUG" : "WARN";
+    string _lvl;
+    switch(lvl) {
+        case level::WARN:
+            _lvl = "WARN"; break;
+        case level::DEBUG:
+            _lvl = "DEBUG"; break;
+        case level::INFO:
+            _lvl = "INFO"; break;
+    }
     string res = "[" + _fmt + "] [" +_lvl + "] " + "[" + name + "] " + message;
     return res;
 }

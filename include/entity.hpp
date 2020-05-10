@@ -24,6 +24,7 @@ class Entity {
         void set_range(int);
         void set_type(EntityType);
         set<pair<int, int> > get_base_vision();
+        void update_health(int);
 
     public:
         int get_health();
@@ -35,6 +36,7 @@ class Entity {
         EntityType get_type();
         int cvt_type_to_id(EntityType);
         bool is_valid(pair<int, int>, int, int, vector<vector<int> >);
+        bool is_in_bounds(pair<int, int>);
         string pos_to_str();
         void add_to_vision(set<pair<int, int>>);
 };
