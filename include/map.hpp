@@ -28,6 +28,7 @@ class Map {
         void set_entity_pos(pair<int, int>, int);
         vector<vector<int> > acquire_map();
         void release_map();
+        void remove_entity_from_pos(pair<int, int>);
 };
 
 #endif

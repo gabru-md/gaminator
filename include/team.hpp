@@ -1,7 +1,9 @@
 #ifndef TEAM_H
 #define TEAM_H
 
+#include <iostream>
 #include <vector>
+#include <set>
 #include <utility>
 using namespace std;
 
@@ -52,8 +54,8 @@ enum EntityType {
     NB // Nadir's Base
 };
 
-static const vector<pair<int, int> > get_base_zenith_vision();
-static const vector<pair<int, int> >get_base_nadir_vision();
+static const set<pair<int, int> > get_base_zenith_vision();
+static const set<pair<int, int> >get_base_nadir_vision();
 
 // creep id counter
 static int CREEP_ID_ZENITH = 0;
@@ -76,29 +78,35 @@ static const int HERO_BASE_HEALTH = 500;
 static const int MAX_CREEPS_POOL_SIZE = 1;
 
 // base vision
-static const vector<pair<int, int> > BASE_VISION_ZENITH = get_base_zenith_vision();
-static const vector<pair<int, int> > BASE_VISION_NADIR = get_base_nadir_vision();
+static const set<pair<int, int> > BASE_VISION_ZENITH = get_base_zenith_vision();
+static const set<pair<int, int> > BASE_VISION_NADIR = get_base_nadir_vision();
 
 // hero and creep ranges
 static const int MAX_CREEP_HIT_RANGE = 1;
-static const int MAX_HERO_HIT_RANGE = 3;    
+static const int MAX_HERO_HIT_RANGE = 3;
+
+// boundary for roaming
+static const int ROAM_LEFT_BOUND = 1;
+static const int ROAM_RIGHT_BOUND = MAP_LENGTH - 1;
+static const int ROAM_TOP_BOUND = 0;
+static const int ROAM_BOTTOM_BOUND = MAP_WIDTH - 1;
 
 // vision methods
-static const vector<pair<int, int> > get_base_nadir_vision() {
-    vector<pair<int, int> > res;
+static const set<pair<int, int> > get_base_nadir_vision() {
+    set<pair<int, int> > res;
     for(int i=0; i<4; i++) {
-        for(int j=11; j<15; j++) {
-            res.push_back({i, j});
+        for(int j=10; j<15; j++) {
+            res.insert({i, j});
         }
     }
     return res;
 }
 
-static const vector<pair<int, int> > get_base_zenith_vision() {
-    vector<pair<int, int> > res;
+static const set<pair<int, int> > get_base_zenith_vision() {
+    set<pair<int, int> > res;
     for(int i=0; i<4; i++) {
         for(int j=0; j<5; j++) {
-            res.push_back({i, j});
+            res.insert({i, j});
         }
     }
     return res;

@@ -2,23 +2,26 @@
 
 Creep::Creep(Team _t) {
     team = _t;
-    creep_id = get_creep_id(); 
+    creep_id = generate_creep_id(); 
     logger = new Logger("CREEPS");
     set_damage(CREEP_BASE_DMG);
     set_vision(get_base_vision());
     set_position(get_base_position());
     set_type(get_creep_type());
     Map::get_world()->set_entity_pos(get_position(), cvt_type_to_id(get_type()));
+    logger->debug("Base Position " + pos_to_str());
     logger->debug("Base vision list size: " + to_string(get_vision().size()));
     logger->debug(get_team_name() + " Creep created with Id: " + to_string(creep_id));
 }
 
 void Creep::run() {
     this_thread::sleep_for(chrono::milliseconds(500));
-    if(no_enemy_in_sight()) {
-        logger->warn("No enemy in sight!", {to_string(get_type())});
-    }
     logger->debug("Running Creep Thread for " + get_team_name() + " Id: " + to_string(creep_id));
+    while(no_enemy_in_sight()) {
+        logger->warn("No enemy in sight!", {to_string(get_type())});
+        move_forward();
+    }
+    logger->warn("Enemy in sight!", {get_team_name(), to_string(get_creep_id())});
     delete this;
 }
 
@@ -27,7 +30,7 @@ Creep::~Creep() {
 }
 
 
-int Creep::get_creep_id() {
+int Creep::generate_creep_id() {
     switch(team) {
         case Team::ZENITH:
             return CREEP_ID_ZENITH++;
@@ -49,6 +52,10 @@ string Creep::get_team_name() {
     }
 }
 
+int Creep::get_creep_id() {
+    return creep_id;
+}
+
 pair<int, int> Creep::get_base_position() {
     switch(team) {
         case Team::ZENITH:
@@ -60,7 +67,7 @@ pair<int, int> Creep::get_base_position() {
     }
 }
 
-vector<pair<int, int> > Creep::get_base_vision() {
+set<pair<int, int> > Creep::get_base_vision() {
     switch(team) {
         case Team::ZENITH:
             return BASE_VISION_ZENITH;
@@ -105,4 +112,57 @@ bool Creep::no_enemy_in_sight() {
     }
     Map::get_world()->release_map();
     return flag;
+}
+
+void Creep::move_forward() {
+    vector<vector<int> > map = Map::get_world()->acquire_map();
+    pair<int, int> creep_pos = get_position();
+    int mv_dy;
+    if(team == Team::ZENITH) {
+        mv_dy = 1;
+    } else {
+        mv_dy = -1;
+    }
+
+    auto dx = {0, 1, -1};
+    auto dy = {mv_dy};
+    bool moved = false;
+    for(int x: dx) {
+        for(int y: dy) {
+            if(is_valid(creep_pos, x, y, map)) {
+                set_position({creep_pos.first + x, creep_pos.second + y});
+                moved = true;
+                break;
+            }
+        }
+        if(moved)
+            break;
+    }
+    Map::get_world()->release_map();
+    // if entity couldn't move then check here -- TODO
+    Map::get_world()->remove_entity_from_pos(creep_pos);
+    Map::get_world()->set_entity_pos(get_position(), cvt_type_to_id(get_type()));
+    logger->debug("Moved to " + pos_to_str(), {get_team_name(), to_string(get_creep_id())});
+    logger->debug("Updating Vision", {get_team_name(), to_string(get_creep_id())});
+    update_vision();
+}
+
+void Creep::update_vision() {
+    int mv_dy;
+    if(team == Team::ZENITH) {
+        mv_dy = 1;
+    } else {
+        mv_dy = -1;
+    }
+    auto dx = {0, 2, -2};
+    auto dy = {mv_dy};
+    set<pair<int, int> > nv;
+    pair<int, int> pos = get_position();
+    for(auto x: dx) {
+        for(auto y: dy) {
+            nv.insert({pos.first + x, pos.second + y});
+        }
+    }
+    add_to_vision(nv);
+    logger->debug("Vision List Size: " + to_string(get_vision().size()), {get_team_name(), to_string(get_creep_id())});
 }

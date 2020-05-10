@@ -12,7 +12,7 @@ void Entity::set_position(pair<int, int> pos) {
     position = pos;
 }
 
-void Entity::set_vision(vector<pair<int, int> > vis) {
+void Entity::set_vision(set<pair<int, int> > vis) {
     vision = vis;
 }
 
@@ -36,7 +36,7 @@ pair<int, int> Entity::get_position() {
     return position;
 }
 
-vector<pair<int, int> > Entity::get_vision() {
+set<pair<int, int> > Entity::get_vision() {
     return vision;
 }
 
@@ -46,6 +46,28 @@ int Entity::get_range() {
 
 EntityType Entity::get_type() {
     return type;
+}
+
+string Entity::pos_to_str() {
+    return "(" + to_string(position.first) + ", " +to_string(position.second) + ")";
+}
+
+void Entity::add_to_vision(set<pair<int, int> > nv) {
+    for(auto pos: nv) {
+        vision.insert(pos);
+    }
+}
+
+bool Entity::is_valid(pair<int, int> pos, int x, int y, vector<vector<int> > map) {
+    int nx = pos.first + x;
+    int ny = pos.second +y;
+    return (
+        ny >= ROAM_LEFT_BOUND && ny <= ROAM_RIGHT_BOUND
+        &&
+        nx >= ROAM_TOP_BOUND && nx <= ROAM_BOTTOM_BOUND
+        &&
+        map[nx][ny] == BLANK_IDENTIFIER
+        );
 }
 
 int Entity::cvt_type_to_id(EntityType et) {

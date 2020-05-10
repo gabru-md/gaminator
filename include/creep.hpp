@@ -13,21 +13,24 @@ class Creep: protected Entity {
         int creep_id;
         Team team;
 
-        int get_creep_id();
+        int generate_creep_id();
         EntityType get_creep_type();
         string get_team_name();
-        vector<pair<int, int> > get_base_vision();
+        set<pair<int, int> > get_base_vision();
         pair<int, int> get_base_position();
     
     protected:
         bool can_move_forward();
         int enemy_creep();
+        void update_vision();
 
     public:
         Creep(Team);
         ~Creep();
         void run();
         bool no_enemy_in_sight();
+        void move_forward();
+        int get_creep_id();
         thread spawn() {
             return thread([=] { run(); });
         }

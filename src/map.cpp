@@ -56,3 +56,11 @@ void Map::set_entity_pos(pair<int, int> pos, int id) {
     map_lock.unlock();
     logger->warn("Position Set Successful", {"POS", to_string(id)});
 }
+
+void Map::remove_entity_from_pos(pair<int, int> pos) {
+    logger->warn("Acquiring Map", {"ENTITY", "RM"});
+    map_lock.lock();
+    map[pos.first][pos.second] = BLANK_IDENTIFIER;
+    map_lock.unlock();    
+    logger->warn("Releasing Map", {"ENTITY", "RM"});
+}
