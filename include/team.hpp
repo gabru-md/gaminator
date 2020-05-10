@@ -69,7 +69,7 @@ static const pair<int, int> CREEP_ZENITH_ST_POS = {2, 1};
 static const pair<int, int> CREEP_NADIR_ST_POS = {2, 13};
 
 // base damage for creep and hero
-static const int CREEP_BASE_DMG = 10;
+static const int CREEP_BASE_DMG = 12;
 static const int HERO_BASE_DMG = 85;
 
 // base health for creep and hero
@@ -78,7 +78,7 @@ static const int HERO_BASE_HEALTH = 500;
 
 // creeps pool
 // static const int MAX_CREEPS_POOL_SIZE = 5;
-static const int MAX_CREEPS_POOL_SIZE = 5;
+static const int MAX_CREEPS_POOL_SIZE = 4;
 
 // base vision
 static const set<pair<int, int> > BASE_VISION_ZENITH = get_base_zenith_vision();
@@ -93,6 +93,9 @@ static const int ROAM_LEFT_BOUND = 1;
 static const int ROAM_RIGHT_BOUND = MAP_LENGTH - 1;
 static const int ROAM_TOP_BOUND = 0;
 static const int ROAM_BOTTOM_BOUND = MAP_WIDTH - 1;
+
+// utils
+static const pair<int, int> EMPTY_PAIR = {-1, -1};
 
 // vision methods
 static const set<pair<int, int> > get_base_nadir_vision() {

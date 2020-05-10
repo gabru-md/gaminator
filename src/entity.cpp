@@ -62,6 +62,10 @@ void Entity::update_health(int h) {
     health += h;
 }
 
+void Entity::reduce_health(int h) {
+    health -= h;
+}
+
 bool Entity::is_valid(pair<int, int> pos, int x, int y, vector<vector<int> > map) {
     int nx = pos.first + x;
     int ny = pos.second +y;

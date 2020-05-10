@@ -66,7 +66,7 @@ void Map::remove_entity_from_pos(pair<int, int> pos) {
 }
 
 void Map::acquire_method() {
-    logger->info("Acquiring Method Lock", {"M-LOCK"});
+    logger->info("Acquiring Method Lock", {"METHOD"});
     method_lock.lock();
 }
 

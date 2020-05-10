@@ -24,11 +24,12 @@ class Entity {
         void set_range(int);
         void set_type(EntityType);
         set<pair<int, int> > get_base_vision();
-        void update_health(int);
 
     public:
         int get_health();
         int get_damage();
+        void update_health(int);
+        void reduce_health(int);
         pair<int, int> get_position();
         set<pair<int, int> > get_vision();
         int get_range();

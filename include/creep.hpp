@@ -5,6 +5,7 @@
 #include "team.hpp"
 #include "entity.hpp"
 #include "map.hpp"
+#include "utils.hpp"
 #include <thread>
 
 class Creep: protected Entity {
@@ -12,6 +13,7 @@ class Creep: protected Entity {
         Logger *logger;
         int creep_id;
         Team team;
+        pair<int, int> enemy_in_sight;
 
         static int zenith_creeps_alive;
         static int nadir_creeps_alive;
@@ -38,9 +40,15 @@ class Creep: protected Entity {
         static int get_alive_count(Team);
 
         void run();
+        void die();
         bool no_enemy_in_sight();
         void move_forward();
         int get_creep_id();
+        void set_enemy_in_sight(pair<int, int>);
+        pair<int, int> get_enemy_in_sight();
+        void damage_health(int);
+        int get_creep_health();
+        pair<int, int> get_creep_position();
         
         thread spawn() {
             return thread([=] { run(); });

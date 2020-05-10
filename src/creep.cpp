@@ -7,10 +7,12 @@ Creep::Creep(Team _t) {
     team = _t;
     creep_id = generate_creep_id(); 
     logger = new Logger("CREEPS");
+    set_health(CREEP_BASE_HEALTH);
     set_damage(CREEP_BASE_DMG);
     set_vision(get_base_vision());
     set_position(get_base_position());
     set_type(get_creep_type());
+    set_enemy_in_sight(EMPTY_PAIR);
     Map::get_world()->set_entity_pos(get_position(), cvt_type_to_id(get_type()));
     incr_alive(team);
 }
@@ -18,15 +20,25 @@ Creep::Creep(Team _t) {
 void Creep::run() {
     this_thread::sleep_for(chrono::milliseconds(500));
     logger->debug("Running Creep Thread for " + get_team_name() + " Id: " + to_string(creep_id));
+    int max_retries = 3;
     while(no_enemy_in_sight()) {
+        pair<int, int> prev_pos = get_position();
         logger->warn("No enemy in sight!", {to_string(get_type())});
         move_forward();
-        // if(has_reached_end()) {
-        //     break;
-        // }
+        pair<int, int> curr_pos = get_position();
+
+        if(is_pair_same(curr_pos, prev_pos)) {
+            max_retries--;
+        }
+
+        if(max_retries<=0) {
+            cerr << "Creeps couldn't move because you fucked up!" << endl;
+            cerr << "Exiting!" << endl;
+            exit(-1);
+        }
     }
     logger->warn("Enemy in sight!", {get_team_name(), to_string(get_creep_id())});
-    delete this;
+    // delete this;
 }
 
 Creep::~Creep() {
@@ -35,6 +47,9 @@ Creep::~Creep() {
     decr_alive(team);
 }
 
+int Creep::get_creep_health() {
+    return get_health();
+}
 
 int Creep::generate_creep_id() {
     switch(team) {
@@ -60,6 +75,18 @@ string Creep::get_team_name() {
 
 int Creep::get_creep_id() {
     return creep_id;
+}
+
+void Creep::damage_health(int h) {
+    reduce_health(h);
+}
+
+void Creep::set_enemy_in_sight(pair<int, int> pos) {
+    enemy_in_sight = pos;
+}
+
+pair<int, int> Creep::get_creep_position() {
+    return get_position();
 }
 
 pair<int, int> Creep::get_base_position() {
@@ -112,13 +139,17 @@ bool Creep::no_enemy_in_sight() {
     vector<vector<int> > map = Map::get_world()->acquire_map();
     for(pair<int, int> vis: get_vision()) {
         if(map[vis.first][vis.second] == enemy_creep()) {
-            // cout << vis.first << ", " << vis.second << endl;
+            set_enemy_in_sight({vis.first, vis.second});
             flag = false;
             break;
         }
     }
     Map::get_world()->release_map();
     return flag;
+}
+
+pair<int, int> Creep::get_enemy_in_sight() {
+    return enemy_in_sight;
 }
 
 void Creep::move_forward() {
