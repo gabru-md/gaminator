@@ -1,0 +1,8 @@
+.settings
+.cproject
+.project
+.externalToolBuilders/
+
+*.o
+logs/*.log
+build/bin/game
